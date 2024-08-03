@@ -11,7 +11,9 @@
     <input type="file" id="fileInput" accept=".xlsx, .xls" />
     <div id="output"></div>
 
-    <p id="lastday-output"></p>
+    <div id="lastday-output"></div>
+
+    <div id="pipd"></div>
 
     <script>
       const piPdCalculator = (newValue, oldValue) => {
@@ -55,23 +57,29 @@
 
       function displayLastEntry(lastdayEntry, entry) {
         const outputDiv = document.getElementById("output");
-        outputDiv.innerHTML = "<h2>Last Entry</h2>";
+        outputDiv.innerHTML = "<h2>Current Entry</h2>";
         const ul = document.createElement("ul");
         for (const key in entry) {
           if (entry.hasOwnProperty(key)) {
             const li = document.createElement("li");
             li.textContent = `${key}: ${entry[key]}`;
             ul.appendChild(li);
-            console.log(typeof entry[key]);
           }
         }
         outputDiv.appendChild(ul);
 
+        const lastDayOutputDiv = document.getElementById('lastday-output');
+        lastDayOutputDiv.innerHTML = '<h2>Last Day Entry</h2>';
+        const p = document.createElement('p');
         for (const key in lastdayEntry) {
             if (lastdayEntry.hasOwnProperty(key)) {
-                document.getElementById('lastday-output').innerText = `${key}: ${lastdayEntry[key]}`
+                p.textContent = `${key}: ${lastdayEntry[key]}`
+                
             }
         }
+        lastDayOutputDiv.appendChild(p);
+
+        document.getElementById('pipd').innerHTML = `<h3>${piPdCalculator(entry, lastdayEntry)}</h3>`
       }
 
 
