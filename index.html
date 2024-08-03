@@ -44,6 +44,7 @@
                     const li = document.createElement('li');
                     li.textContent = `${key}: ${entry[key]}`;
                     ul.appendChild(li);
+                    console.log(typeof(entry[key]));
                 }
             }
             outputDiv.appendChild(ul);
