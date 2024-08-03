@@ -1,55 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Excel File Upload</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Upload Excel File</h1>
-    <input type="file" id="fileInput" accept=".xlsx, .xls">
+    <input type="file" id="fileInput" accept=".xlsx, .xls" />
     <div id="output"></div>
 
-    <script>
-        document.getElementById('fileInput').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const sheetName = 'Data for Total_Data_Volume_Upda';
-                    const worksheet = workbook.Sheets[sheetName];
-                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+    <p id="lastday-output"></p>
 
-                    if (jsonData.length > 0) {
-                        const lastDayEntry = jsonData[jsonData.length - 97];
-                        const lastEntry = jsonData[jsonData.length - 1];
-                        console.log(lastDayEntry);
-                        displayLastEntry(lastEntry);
-                    } else {
-                        document.getElementById('output').innerText = 'No data found in the file.';
-                    }
-                };
-                reader.readAsArrayBuffer(file);
-            }
+    <script>
+      const piPdCalculator = (newValue, oldValue) => {
+        const percentage = ((newValue - oldValue) / oldValue) * 100;
+        const roundedPercentage = percentage.toFixed(2);
+        if (newValue > oldValue) {
+          return `Percentage Increase: ${roundedPercentage}%`;
+        } else if (newValue < oldValue) {
+          return `Percentage Decrease: ${-roundedPercentage}%`;
+        } else {
+          return "No percentage increase or decrease";
+        }
+      };
+
+      document
+        .getElementById("fileInput")
+        .addEventListener("change", function (event) {
+          const file = event.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+              const data = new Uint8Array(e.target.result);
+              const workbook = XLSX.read(data, { type: "array" });
+              const sheetName = "Data for Total_Data_Volume_Upda";
+              const worksheet = workbook.Sheets[sheetName];
+              const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+              if (jsonData.length > 0) {
+                const lastDayEntry = jsonData[jsonData.length - 97];
+                const lastEntry = jsonData[jsonData.length - 1];
+                console.log(lastDayEntry);
+                displayLastEntry(lastdayEntry, lastEntry);
+              } else {
+                document.getElementById("output").innerText =
+                  "No data found in the file.";
+              }
+            };
+            reader.readAsArrayBuffer(file);
+          }
         });
 
-        function displayLastEntry(entry) {
-            const outputDiv = document.getElementById('output');
-            outputDiv.innerHTML = '<h2>Last Entry</h2>';
-            const ul = document.createElement('ul');
-            for (const key in entry) {
-                if (entry.hasOwnProperty(key)) {
-                    const li = document.createElement('li');
-                    li.textContent = `${key}: ${entry[key]}`;
-                    ul.appendChild(li);
-                    console.log(typeof(entry[key]));
-                }
-            }
-            outputDiv.appendChild(ul);
+      function displayLastEntry(lastdayEntry, entry) {
+        const outputDiv = document.getElementById("output");
+        outputDiv.innerHTML = "<h2>Last Entry</h2>";
+        const ul = document.createElement("ul");
+        for (const key in entry) {
+          if (entry.hasOwnProperty(key)) {
+            const li = document.createElement("li");
+            li.textContent = `${key}: ${entry[key]}`;
+            ul.appendChild(li);
+            console.log(typeof entry[key]);
+          }
         }
+        outputDiv.appendChild(ul);
+
+        for (const key in lastdayEntry) {
+            if (lastdayEntry.hasOwnProperty(key)) {
+                document.getElementById('lastday-output').innerText = `${key}: ${lastdayEntry[key]}`
+            }
+        }
+      }
+
+
     </script>
-</body>
+  </body>
 </html>
