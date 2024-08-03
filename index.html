@@ -24,7 +24,7 @@
                     const jsonData = XLSX.utils.sheet_to_json(worksheet);
 
                     if (jsonData.length > 0) {
-                        const lastDayEntry = jsonData[jsonData.length - 5];
+                        const lastDayEntry = jsonData[jsonData.length - 97];
                         const lastEntry = jsonData[jsonData.length - 1];
                         console.log(lastDayEntry);
                         displayLastEntry(lastEntry);
