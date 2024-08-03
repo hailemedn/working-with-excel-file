@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel File Upload</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+</head>
+<body>
+    <h1>Upload Excel File</h1>
+    <input type="file" id="fileInput" accept=".xlsx, .xls">
+    <div id="output"></div>
+
+    <script>
+        document.getElementById('fileInput').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[sheetName];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+
+                    if (jsonData.length > 0) {
+                        const lastEntry = jsonData[jsonData.length - 1];
+                        console.log(lastEntry);
+                        displayLastEntry(lastEntry);
+                    } else {
+                        document.getElementById('output').innerText = 'No data found in the file.';
+                    }
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        });
+
+        function displayLastEntry(entry) {
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = '<h2>Last Entry</h2>';
+            const ul = document.createElement('ul');
+            for (const key in entry) {
+                if (entry.hasOwnProperty(key)) {
+                    const li = document.createElement('li');
+                    li.textContent = `${key}: ${entry[key]}`;
+                    ul.appendChild(li);
+                }
+            }
+            outputDiv.appendChild(ul);
+        }
+    </script>
+</body>
+</html>
