@@ -7,12 +7,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
   </head>
   <body>
-    <h1>Upload Excel File</h1>
+    <h1>Upload Excel Files</h1>
     <input type="file" id="fileInput" accept=".xlsx, .xls" />
     <div>
       <label for="">Comparison for:</label>
       <select name="" id="">
-        <option value="Data for Total_Data_Volume_Upda">Total_Data_Volume_Upda</option>
+        <option value="Data for Total_Data_Volume_Upda">
+          Total_Data_Volume_Upda
+        </option>
         <option value="Data for 4G data volume">Overall data volume</option>
       </select>
     </div>
@@ -53,15 +55,17 @@
               const worksheet = workbook.Sheets[sheetName];
               const jsonData = XLSX.utils.sheet_to_json(worksheet);
               const lastEntryIndex = jsonData.length - 1;
-              const lastDayEntryIndex = jsonData.length - 97;
-              const lastWeekEntryIndex = jsonData.length - 671;
+              const lastDayEntryIndex = jsonData.length - 97
+              const lastWeekEntryIndex = jsonData.length - 673;
+              console.log(lastEntryIndex);
+              console.log(lastDayEntryIndex);
               console.log(lastWeekEntryIndex);
 
               if (jsonData.length > 0) {
                 const lastWeekEntry = jsonData[lastWeekEntryIndex];
                 const lastDayEntry = jsonData[lastDayEntryIndex];
                 const lastEntry = jsonData[lastEntryIndex];
-                console.log(lastDayEntry)
+                console.log(lastDayEntry);
                 console.log(lastEntry);
                 console.log(lastWeekEntry);
                 displayLastEntry(lastWeekEntry, lastDayEntry, lastEntry);
@@ -97,26 +101,36 @@
         // }
         // lastDayOutputDiv.appendChild(p);
 
-        const currentOutputDiv = document.getElementById('output');
-        currentOutputDiv.innerHTML = `<p>Current value: ${entry['Total_Data_Volume_Updated']}</p>`;
+        document.getElementById(
+          "output"
+        ).innerHTML = `<p>Current value: ${entry['Total_Data_Volume_Updated']}</p>`;
+        document.getElementById(
+          "lastday-output"
+        ).innerHTML = `<p>Last day Entry: ${lastdayEntry['Total_Data_Volume_Updated']}</p>`;
+        document.getElementById(
+          "lastweek-output"
+        ).innerHTML = `<p>Last Week Entry: ${lastWeekEntry['Total_Data_Volume_Updated']}</p>`;
 
-        const lastDayOutputDiv = document.getElementById('lastday-output');
-        lastDayOutputDiv.innerHTML = `<p>Last day Entry: ${lastdayEntry['Total_Data_Volume_Updated']}</p>`;
+        const lastdayComparison = piPdCalculator(
+          entry["Total_Data_Volume_Updated"],
+          lastdayEntry["Total_Data_Volume_Updated"]
+        );
+        const lastWeekComparison = piPdCalculator(
+          entry["Total_Data_Volume_Updated"],
+          lastWeekEntry["Total_Data_Volume_Updated"]
+        );
 
+        console.log('lastday: ' + lastdayComparison);
+        console.log('lastweek: ' + lastWeekComparison);
 
-        const lastWeekOutputDiv = document.getElementById('lastweek-output');
-        lastWeekOutputDiv.innerHTML = `<p>Last Week Entry: ${lastWeekEntry['Total_Data_Volume_Updated']}</p>`;
-        
-        
-        const lastdayComparison = piPdCalculator(entry['Total_Data_Volume_Updated'], lastdayEntry['Total_Data_Volume_Updated']);
-        const lastWeekComparison = piPdCalculator(entry['Total_Data_Volume_Updated'], lastWeekEntry['Total_Data_Volume_Updated'])
+        document.getElementById(
+          "pipd-from-lastday"
+        ).innerHTML = `<h4>From yesterday, ${lastdayComparison}</h4>`;
 
-        document.getElementById('pipd-from-lastday').innerHTML = `<h4>From yesterday, ${lastdayComparison}</h4>`;
-        
-        document.getElementById('pidpd-from-lastweek').innerHTML = `<h4>From last week, ${lastWeekComparison}</h4>`;
+        document.getElementById(
+          "pidpd-from-lastweek"
+        ).innerHTML = `<h4>From last week, ${lastWeekComparison}</h4>`;
       }
-
-
     </script>
   </body>
 </html>
