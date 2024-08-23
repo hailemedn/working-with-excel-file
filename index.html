@@ -17,10 +17,11 @@
       </select>
     </div>
 
-    
     <div id="output"></div>
 
     <div id="lastday-output"></div>
+
+    <div id="lastweek-output"></div>
 
     <div id="pipd-from-lastday"></div>
 
@@ -53,13 +54,16 @@
               const jsonData = XLSX.utils.sheet_to_json(worksheet);
               const lastEntryIndex = jsonData.length - 1;
               const lastDayEntryIndex = jsonData.length - 97;
-              const lastWeekEntryIndex = lastDayEntryIndex - 679;
+              const lastWeekEntryIndex = jsonData.length - 671;
+              console.log(lastWeekEntryIndex);
 
               if (jsonData.length > 0) {
                 const lastWeekEntry = jsonData[lastWeekEntryIndex];
                 const lastDayEntry = jsonData[lastDayEntryIndex];
                 const lastEntry = jsonData[lastEntryIndex];
-                console.log(`last week entry: ${lastWeekEntry}`);
+                console.log(lastDayEntry)
+                console.log(lastEntry);
+                console.log(lastWeekEntry);
                 displayLastEntry(lastWeekEntry, lastDayEntry, lastEntry);
               } else {
                 document.getElementById("output").innerText =
@@ -71,31 +75,45 @@
         });
 
       function displayLastEntry(lastWeekEntry, lastdayEntry, entry) {
-        const outputDiv = document.getElementById("output");
-        outputDiv.innerHTML = "<h2>Current Entry</h2>";
-        const ul = document.createElement("ul");
-        for (const key in entry) {
-          if (entry.hasOwnProperty(key)) {
-            const li = document.createElement("li");
-            li.textContent = `${key}: ${entry[key]}`;
-            ul.appendChild(li);
-          }
-        }
-        outputDiv.appendChild(ul);
+        // const outputDiv = document.getElementById("output");
+        // outputDiv.innerHTML = "<h2>Current Entry</h2>";
+        // const ul = document.createElement("ul");
+        // for (const key in entry) {
+        //   if (entry.hasOwnProperty(key)) {
+        //     const li = document.createElement("li");
+        //     li.textContent = `${key}: ${entry[key]}`;
+        //     ul.appendChild(li);
+        //   }
+        // }
+        // outputDiv.appendChild(ul);
+
+        // const lastDayOutputDiv = document.getElementById('lastday-output');
+        // lastDayOutputDiv.innerHTML = '<h2>Last Day Entry</h2>';
+        // const p = document.createElement('p');
+        // for (const key in lastdayEntry) {
+        //     if (lastdayEntry.hasOwnProperty(key)) {
+        //         p.textContent = `${key}: ${lastdayEntry[key]}`
+        //     }
+        // }
+        // lastDayOutputDiv.appendChild(p);
+
+        const currentOutputDiv = document.getElementById('output');
+        currentOutputDiv.innerHTML = `<p>Current value: ${entry['Total_Data_Volume_Updated']}</p>`;
 
         const lastDayOutputDiv = document.getElementById('lastday-output');
-        lastDayOutputDiv.innerHTML = '<h2>Last Day Entry</h2>';
-        const p = document.createElement('p');
-        for (const key in lastdayEntry) {
-            if (lastdayEntry.hasOwnProperty(key)) {
-                p.textContent = `${key}: ${lastdayEntry[key]}`
-                
-            }
-        }
-        lastDayOutputDiv.appendChild(p);
+        lastDayOutputDiv.innerHTML = `<p>Last day Entry: ${lastdayEntry['Total_Data_Volume_Updated']}</p>`;
 
-        document.getElementById('pipd-from-lastday').innerHTML = `<h4>${piPdCalculator(entry['Total_Data_Volume_Updated'], lastdayEntry['Total_Data_Volume_Updated'])}</h4>`
-        document.getElementById('pipd-from-lastweek').innerHTML = `<h4>${piPdCalculator(entry['Total_Data_Volume_Updated'], lastWeekEntry['Total_Data_Volume_Updated'])}</h4>`
+
+        const lastWeekOutputDiv = document.getElementById('lastweek-output');
+        lastWeekOutputDiv.innerHTML = `<p>Last Week Entry: ${lastWeekEntry['Total_Data_Volume_Updated']}</p>`;
+        
+        
+        const lastdayComparison = piPdCalculator(entry['Total_Data_Volume_Updated'], lastdayEntry['Total_Data_Volume_Updated']);
+        const lastWeekComparison = piPdCalculator(entry['Total_Data_Volume_Updated'], lastWeekEntry['Total_Data_Volume_Updated'])
+
+        document.getElementById('pipd-from-lastday').innerHTML = `<h4>From yesterday, ${lastdayComparison}</h4>`;
+        
+        document.getElementById('pidpd-from-lastweek').innerHTML = `<h4>From last week, ${lastWeekComparison}</h4>`;
       }
 
 
