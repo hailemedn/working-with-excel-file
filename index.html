@@ -9,11 +9,22 @@
   <body>
     <h1>Upload Excel File</h1>
     <input type="file" id="fileInput" accept=".xlsx, .xls" />
+    <div>
+      <label for="">Comparison for:</label>
+      <select name="" id="">
+        <option value="Data for Total_Data_Volume_Upda">Total_Data_Volume_Upda</option>
+        <option value="Data for 4G data volume">Overall data volume</option>
+      </select>
+    </div>
+
+    
     <div id="output"></div>
 
     <div id="lastday-output"></div>
 
-    <div id="pipd"></div>
+    <div id="pipd-from-lastday"></div>
+
+    <div id="pidpd-from-lastweek"></div>
 
     <script>
       const piPdCalculator = (newValue, oldValue) => {
@@ -40,12 +51,15 @@
               const sheetName = "Data for Total_Data_Volume_Upda";
               const worksheet = workbook.Sheets[sheetName];
               const jsonData = XLSX.utils.sheet_to_json(worksheet);
+              const lastEntryIndex = jsonData.length - 1;
+              const lastDayEntryIndex = jsonData.length - 97;
+              const lastWeekEntryIndex = lastDayEntryIndex - 679;
 
               if (jsonData.length > 0) {
-                const lastDayEntry = jsonData[jsonData.length - 97];
-                const lastEntry = jsonData[jsonData.length - 1];
-                console.log(lastDayEntry);
-                displayLastEntry(lastDayEntry, lastEntry);
+                const lastWeekEntry = jsonData[lastWeekEntryIndex];
+                const lastDayEntry = jsonData[lastDayEntryIndex];
+                const lastEntry = jsonData[lastEntryIndex];
+                displayLastEntry(lastWeekEntry, lastDayEntry, lastEntry);
               } else {
                 document.getElementById("output").innerText =
                   "No data found in the file.";
@@ -55,7 +69,7 @@
           }
         });
 
-      function displayLastEntry(lastdayEntry, entry) {
+      function displayLastEntry(lastWeekEntry, lastdayEntry, entry) {
         const outputDiv = document.getElementById("output");
         outputDiv.innerHTML = "<h2>Current Entry</h2>";
         const ul = document.createElement("ul");
@@ -79,7 +93,8 @@
         }
         lastDayOutputDiv.appendChild(p);
 
-        document.getElementById('pipd').innerHTML = `<h3>${piPdCalculator(entry['Total_Data_Volume_Updated'], lastdayEntry['Total_Data_Volume_Updated'])}</h3>`
+        document.getElementById('pipd-from-lastday').innerHTML = `<h4>${piPdCalculator(entry['Total_Data_Volume_Updated'], lastdayEntry['Total_Data_Volume_Updated'])}</h4>`
+        document.getElementById('pipd-from-lastweek').innerHTML = `<h4>${piPdCalculator(entry['Total_Data_Volume_Updated', lastWeekEntry['Total_Data_Volume_Updated']])}</h4>`
       }
 
 
